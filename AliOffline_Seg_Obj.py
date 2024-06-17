@@ -13,8 +13,8 @@ from .utils import *
 from .merge_utils import png_to_mask
 
 comfy_path = os.path.dirname(folder_paths.__file__)
-custom_nodes_path = os.path.join(comfy_path, "custom_nodes")
-model_path = os.path.join(comfy_path, "models","modelscope","cv_unet_image-matting")
+models_path = os.path.join(comfy_path, "models","modelscope")
+model_path = os.path.join(models_path, "damo","cv_unet_image-matting")
 
 class AliOffline_Seg_Obj:
    
@@ -37,10 +37,12 @@ class AliOffline_Seg_Obj:
     CATEGORY = "CXH"
 
     def sample(self,image,return_form):
+        os.environ['MODELSCOPE_CACHE']=models_path
+        
         tf.compat.v1.disable_eager_execution()
         sess = tf.compat.v1.Session()
         model = pipeline(
-            Tasks.portrait_matting, model=model_path
+            Tasks.portrait_matting, model="damo/cv_unet_image-matting"
         )
         result = model(tensor2pil(image))
         ndarray = cv2.cvtColor(result[OutputKeys.OUTPUT_IMG], cv2.COLOR_BGR2RGBA)
